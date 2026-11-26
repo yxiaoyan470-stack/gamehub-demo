@@ -1,0 +1,220 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GameHub Demo</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ background:#100d1d;
+ color:#fff;
+ font-family:Arial,sans-serif;
+}
+header{
+ padding:20px;
+ background:#1d1830;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ border-bottom:1px solid #493b60;
+}
+.logo{font-size:23px;font-weight:bold;color:#b58aff}
+.wallet{
+ background:#302344;
+ padding:12px 16px;
+ border-radius:25px;
+ color:#ffd36a;
+ font-weight:bold;
+}
+main{max-width:850px;margin:auto;padding:20px}
+.hero{
+ background:linear-gradient(130deg,#50327c,#211832);
+ padding:28px;
+ border-radius:20px;
+ margin-bottom:22px;
+}
+.hero h1{font-size:30px;margin:5px 0}
+.hero p{color:#ddd}
+.games{
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+ gap:15px;
+}
+.card{
+ background:#211a34;
+ border:1px solid #493b60;
+ border-radius:18px;
+ padding:20px;
+ text-align:center;
+}
+.emoji{font-size:55px}
+button{
+ background:#9b72ff;
+ border:0;
+ color:white;
+ padding:13px 20px;
+ border-radius:10px;
+ font-size:16px;
+ font-weight:bold;
+ cursor:pointer;
+}
+button:active{transform:scale(.97)}
+.game{
+ background:#211a34;
+ border-radius:18px;
+ padding:25px;
+ margin-top:20px;
+ text-align:center;
+ display:none;
+}
+.result{font-size:30px;color:#ffd36a;margin:20px}
+input{
+ padding:12px;
+ width:100px;
+ border-radius:8px;
+ border:0;
+ font-size:18px;
+ text-align:center;
+}
+.small{color:#aaa;font-size:13px}
+</style>
+</head>
+<body>
+
+<header>
+ <div class="logo">🎮 GAMEHUB</div>
+ <div class="wallet">⭐ <span id="balance">1000</span> Points</div>
+</header>
+
+<main>
+ <section class="hero">
+  <h1>Welcome to GameHub</h1>
+  <p>Play games and enjoy your experience.</p>
+  <p>Demo Account | Virtual Points Only</p>
+ </section>
+
+ <h2>Choose Your Game</h2>
+
+ <div class="games">
+  <div class="card">
+   <div class="emoji">🎡</div>
+   <h3>Lucky Wheel</h3>
+   <p>Spin the wheel and collect points.</p>
+   <button onclick="openGame('wheel')">Play Now</button>
+  </div>
+
+  <div class="card">
+   <div class="emoji">🎲</div>
+   <h3>Dice Game</h3>
+   <p>Roll the dice and test your luck.</p>
+   <button onclick="openGame('dice')">Play Now</button>
+  </div>
+
+  <div class="card">
+   <div class="emoji">🔢</div>
+   <h3>Number Guess</h3>
+   <p>Guess the hidden number.</p>
+   <button onclick="openGame('guess')">Play Now</button>
+  </div>
+ </div>
+
+ <section class="game" id="wheel">
+  <h2>🎡 Lucky Wheel</h2>
+  <p>Free demo spin</p>
+  <div class="result" id="wheelResult">?</div>
+  <button onclick="spinWheel()">SPIN</button>
+  <p><button onclick="closeGames()">Back</button></p>
+ </section>
+
+ <section class="game" id="dice">
+  <h2>🎲 Dice Game</h2>
+  <div class="result" id="diceResult">?</div>
+  <button onclick="rollDice()">ROLL DICE</button>
+  <p><button onclick="closeGames()">Back</button></p>
+ </section>
+
+ <section class="game" id="guess">
+  <h2>🔢 Number Guess</h2>
+  <p>Guess a number between 1 and 5</p>
+  <input id="guessInput" type="number" min="1" max="5">
+  <div class="result" id="guessResult">?</div>
+  <button onclick="guessNumber()">CHECK</button>
+  <p><button onclick="closeGames()">Back</button></p>
+ </section>
+
+ <p class="small" style="text-align:center;margin-top:35px">
+  GameHub Demo v1.0<br>
+  Virtual points have no cash value.
+ </p>
+</main>
+
+<script>
+let balance=1000;
+
+function updateBalance(){
+ document.getElementById("balance").textContent=balance;
+}
+
+function openGame(id){
+ closeGames();
+ document.getElementById(id).style.display="block";
+ document.getElementById(id).scrollIntoView({behavior:"smooth"});
+}
+
+function closeGames(){
+ document.querySelectorAll(".game").forEach(g=>{
+  g.style.display="none";
+ });
+}
+
+function spinWheel(){
+ if(balance<10){alert("Not enough demo points");return;}
+ balance-=10;
+ let prizes=[0,10,20,30,50,100];
+ let prize=prizes[Math.floor(Math.random()*prizes.length)];
+ balance+=prize;
+ document.getElementById("wheelResult").textContent=
+ "You won "+prize+" points!";
+ updateBalance();
+}
+
+function rollDice(){
+ if(balance<10){alert("Not enough demo points");return;}
+ balance-=10;
+ let dice=Math.floor(Math.random()*6)+1;
+ document.getElementById("diceResult").textContent=
+ "🎲 "+dice;
+ if(dice>=4){
+  balance+=20;
+  document.getElementById("diceResult").textContent+=" - +20 Points!";
+ }else{
+  document.getElementById("diceResult").textContent+=" - Try again!";
+ }
+ updateBalance();
+}
+
+function guessNumber(){
+ let input=Number(document.getElementById("guessInput").value);
+ if(!Number.isInteger(input)||input<1||input>5){
+  alert("Enter a number between 1 and 5");
+  return;
+ }
+ if(balance<10){alert("Not enough demo points");return;}
+ balance-=10;
+ let answer=Math.floor(Math.random()*5)+1;
+ if(input===answer){
+  balance+=40;
+  document.getElementById("guessResult").textContent=
+  "Correct! +40 Points";
+ }else{
+  document.getElementById("guessResult").textContent=
+  "Number was "+answer+". Try again!";
+ }
+ updateBalance();
+}
+</script>
+</body>
+</html>
